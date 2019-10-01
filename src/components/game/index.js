@@ -26,46 +26,55 @@ class Game extends Component {
                     value: '',
                     style: '',
                     row: 1,
+                    fill: '',
                 },
                 {
                     value: '',
                     style: '',
                     row: 1,
+                    fill: '',
                 },
                 {
                     value: '',
                     style: '',
                     row: 1,
+                    fill: '',
                 },
                 {
                     value: '',
                     style: '',
                     row: 2,
+                    fill: '',
                 },
                 {
                     value: '',
                     style: '',
                     row: 2,
+                    fill: '',
                 },
                 {
                     value: '',
                     style: '',
                     row: 2,
+                    fill: '',
                 },
                 {
                     value: '',
                     style: '',
                     row: 3,
+                    fill: '',
                 },
                 {
                     value: '',
                     style: '',
                     row: 3,
+                    fill: '',
                 },
                 {
                     value: '',
                     style: '',
                     row: 3,
+                    fill: '',
                 },
             ]
         };
@@ -82,14 +91,27 @@ class Game extends Component {
 	      for (let i = 0; i < cells.length; i++) {
 		        cells[i].value = '';
 		        cells[i].style = '';
+		        cells[i].fill = '';
 	      }
     }
 
     checkWinner = (symbol) => {
         let { cells } = this.state;
-        winPossibilities.map((possibility) => {
-            if (cells[possibility[0]].value == symbol && cells[possibility[1]].value == symbol && cells[possibility[2]].value == symbol)
+        let possibilityIdx = -1;
+        winPossibilities.map((possibility, idx) => {
+            if (cells[possibility[0]].value == symbol && cells[possibility[1]].value == symbol && cells[possibility[2]].value == symbol) {
                 this.setState({ endGame: true });
+                possibilityIdx = idx;
+            }
+        });
+        return possibilityIdx;
+    }
+
+    fillWinnerMove = (winnerCells) => {
+        console.log(winnerCells);
+        let { cells } = this.state;
+        winnerCells.map((cell) => {
+            cells[cell].fill = 'rgba(0,200,0,0.4)';
         });
     }
 
@@ -98,7 +120,11 @@ class Game extends Component {
         cells[position].value = symbol;
         this.setState({ cells });
 
-        this.checkWinner(symbol);
+        let result = this.checkWinner(symbol);
+        if (result !== -1) {
+            console.log("ganhou");
+            this.fillWinnerMove(winPossibilities[result]);
+        }
     }
 
     getMove = (e) => {
@@ -116,21 +142,21 @@ class Game extends Component {
                 <tr>
                 {cells && cells.map( (cell, idx) => (
                   <>
-                    {cell.row === 1 ? (<td className="cell" onClick={this.getMove} key={idx} id={idx}>{ cell.value }</td>) : null }
+                        {cell.row === 1 ? (<td className="cell" style={{backgroundColor: cell.fill}} onClick={this.getMove} key={idx} id={idx}>{ cell.value }</td>) : null }
                   </>
                 ))}
                 </tr>
                 <tr>
                 {cells && cells.map( (cell, idx) => (
                   <>
-                        {cell.row === 2 ? (<td className="cell" onClick={this.getMove} key={idx} id={idx}>{ cell.value }</td>) : null }
+                        {cell.row === 2 ? (<td className="cell" style={{backgroundColor: cell.fill}} onClick={this.getMove} key={idx} id={idx}>{ cell.value }</td>) : null }
                   </>
                 ))}
                 </tr>
                 <tr>
                 {cells && cells.map( (cell, idx) => (
                   <>
-                  {cell.row === 3 ? (<td className="cell" onClick={this.getMove} key={idx} id={idx}>{ cell.value }</td>) : null }
+                        {cell.row === 3 ? (<td className="cell" style={{backgroundColor: cell.fill}} onClick={this.getMove} key={idx} id={idx}>{ cell.value }</td>) : null }
                   </>
                 ))}
                 </tr>
