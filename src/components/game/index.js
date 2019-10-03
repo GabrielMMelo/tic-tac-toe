@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Button from '@material-ui/core/Button';
 import cloneDeep from 'lodash/cloneDeep';
 import './style.css';
 
@@ -254,6 +255,9 @@ class Game extends Component {
         let hide = !endGame ? {display: 'none'} : {};
         return (
                 <>
+                <div align="center">
+                    <p> Jogo desenvolvido utilizando o algoritmo de <i>MinMax</i> para a disciplina de <i>Inteligência Artificial</i> do curso de graduação em ciência da computação da UFLA. </p>
+                </div>
                 <table>
                 <tbody>
                 <tr>
@@ -282,7 +286,9 @@ class Game extends Component {
                 <div className="endgame" style={hide}>
                 <div className="text">{ winner ? winner + " venceu!" : 'Empate!' }</div>
                 </div>
-                <button onClick={this.startGame}>Replay</button>
+                <Button onClick={this.startGame} variant="contained" color="primary" className='button'>
+                    Recomeçar
+                </Button>
                 </>
         );
     }
