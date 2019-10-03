@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import cloneDeep from 'lodash/cloneDeep';
 import './style.css';
 
 
@@ -18,16 +19,19 @@ class Game extends Component {
         super(props);
 
         this.state = {
-            players: [
-                {
-                    name: 'Player',
-                    symbol: 1,
-                },
-                {
-                    name: 'IA',
-                    symbol: 0,
-                }
-            ],
+            gameMode: "dumb",
+            players: {
+                "human":
+                    {
+                        name: 'Você',
+                        symbol: '1',
+                    },
+                "ai":
+                    {
+                        name: 'IA',
+                        symbol: '0',
+                    }
+            },
             endGame: false,
             winner: null,
             cells: [
@@ -112,33 +116,121 @@ class Game extends Component {
         }
     }
 
-    emptyCells = () => {
-        const { cells } = this.state;
+    getMove = (e) => {
+        const { players } = this.state;
+        if(this.isValidMovement(e.target.id)) {   // cell is still available
+            this.turn(e.target.id, players['human']);
+            this.setState({}, () => {  // setState() without objects to update in order to force the endGame's pending update
+                const { endGame } = this.state;
+                if (!endGame)  // if it isn't a tie
+                    this.turn(this.bestMove(), players['ai']);
+            });
+        }
+    }
+
+    turn = (position, player) => {
+        let { cells } = this.state;
+        cells[position].value = player.symbol;
+        this.setState({ cells });
+
+        let result = this.checkWinner(cells, player);
+        if (result !== -1) {
+            this.fillWinnerMove(winPossibilities[result]);
+
+            return result;
+        }
+    }
+
+    emptyCells = (cells, fromMinMax=false) => {
         let empties = cells.filter(cell => cell.value === '');
-        if (empties.length === 0) {
+        if (empties.length === 0 && !fromMinMax) {
             this.setState({ endGame: true });
         }
         return empties;
     }
 
     bestMove = () => {
-        try {
-            return this.emptyCells()[0].id;
-        } catch(err) {
+        const { gameMode, players, cells } = this.state;
+        if (gameMode === 'dum') {
+            try {
+                return this.emptyCells(cells)[0].id;
+            } catch(err) {
+            }
+        }
+        else {
+            let cellsCopy = cloneDeep(cells);
+            console.log(cellsCopy);
+            return this.minimax(cellsCopy, players['ai']).index;
         }
     }
 
-    checkWinner = (player) => {
-        let { cells } = this.state;
+    minimax = (cells, player) => {
+        const { players } = this.state;
+        var empties = this.emptyCells(cells, true);
+
+        if (this.checkWinner(cells, players.human, true) !== -1) {
+            return {score: -10};
+        } else if (this.checkWinner(cells, players.ai, true) !== -1) {
+            return {score: 10};
+        } else if (empties.length === 0) {
+            return {score: 0};
+        }
+        var moves = [];
+        for (var i = 0; i < empties.length; i++) {
+            var move = {};
+            move.index = cells[empties[i].id].id;
+            cells[empties[i].id].value = player.symbol;
+
+            if (player == players['ai']) {
+                let result = this.minimax(cloneDeep(cells), players.human);
+                move.score = result.score;
+            } else {
+                let result = this.minimax(cloneDeep(cells), players.ai);
+                move.score = result.score;
+            }
+
+		        cells[empties[i].id].value = '';
+
+            moves.push(move);
+        }
+
+        var bestMove;
+        if(player === players['ai']) {
+            let bestScore = -10000;
+            for(let i = 0; i < moves.length; i++) {
+                if (moves[i].score > bestScore) {
+                    bestScore = moves[i].score;
+                    bestMove = i;
+                }
+            }
+        } else {
+            let bestScore = 10000;
+            for(let i = 0; i < moves.length; i++) {
+            if (moves[i].score < bestScore) {
+                bestScore = moves[i].score;
+                bestMove = i;
+            }
+            }
+        }
+
+        if(player === players['ai'])
+            ;
+            //console.log("Moves", moves);
+        return moves[bestMove];
+    }
+
+
+    checkWinner = (cells, player, fromMinMax=false) => {
         let possibilityIdx = -1;
         winPossibilities.map((possibility, idx) => {
             if (cells[possibility[0]].value === player.symbol && cells[possibility[1]].value === player.symbol && cells[possibility[2]].value === player.symbol) {
+                if(!fromMinMax)
                 this.setState({ endGame: true, winner: player.name });
                 possibilityIdx = idx;
             }
         });
 
-        this.emptyCells();
+        this.emptyCells(cells, fromMinMax);
 
         return possibilityIdx;
     }
@@ -150,35 +242,11 @@ class Game extends Component {
         });
     }
 
-    turn = (position, player) => {
-        let { cells } = this.state;
-        cells[position].value = player.symbol;
-        this.setState({ cells });
-
-        let result = this.checkWinner(player);
-        if (result !== -1) {
-            this.fillWinnerMove(winPossibilities[result]);
-
-            return result;
-        }
-    }
-
     isValidMovement = (position) => {
         const { endGame, cells } = this.state;
         return !endGame && cells[position].value === '';
     }
 
-    getMove = (e) => {
-        const { players } = this.state;
-        if(this.isValidMovement(e.target.id)) {   // cell is still available
-            this.turn(e.target.id, players[0]);
-            this.setState({}, () => {  // setState() without objects to update in order to force the endGame's pending update
-                const { endGame } = this.state;
-                if (!endGame)  // if it isn't a tie
-                    this.turn(this.bestMove(), players[1]);
-            });
-        }
-    }
 
     render() {
         const { cells, endGame, winner } = this.state;
