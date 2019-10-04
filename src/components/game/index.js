@@ -255,9 +255,6 @@ class Game extends Component {
         let hide = !endGame ? {display: 'none'} : {};
         return (
                 <>
-                <div align="center">
-                    <p> Jogo desenvolvido utilizando o algoritmo de <i>MinMax</i> para a disciplina de <i>Inteligência Artificial</i> do curso de graduação em ciência da computação da UFLA. </p>
-                </div>
                 <table>
                 <tbody>
                 <tr>
