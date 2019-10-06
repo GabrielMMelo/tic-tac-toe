@@ -41,15 +41,17 @@ class Home extends Component {
                 </AppBar>
             </div>
 
-            <div align="center">
+            <div align='center'>
                 <p> Jogo desenvolvido utilizando o algoritmo de <i>MinMax</i> para a disciplina de <i>Inteligência Artificial</i> do curso de graduação em ciência da computação da UFLA. </p>
             </div>
 
-            <Grid container spacing={3}>
-                <Grid item xs={3}>
-                    <Setup setSetup={this.setSetup}/>
+            <Grid container justify="center" spacing={3}>
+                <Grid item xs={6}>
+                    <div className="setup">
+                        <Setup setSetup={this.setSetup}/>
+                    </div>
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item xs={6}>
                     <Game setup={setup} />
                 </Grid>
             </Grid>

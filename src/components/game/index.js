@@ -252,40 +252,47 @@ class Game extends Component {
     render() {
         const { cells, endGame, winner } = this.state;
 
-        let hide = !endGame ? {display: 'none'} : {};
+        let styleEndGame = !endGame ? {visibility: 'hidden'} : {};
+        //let styleButton = !started ? {}
         return (
                 <>
-                <table>
-                <tbody>
-                <tr>
-                {cells && cells.map( (cell, idx) => (
-                        <>
-                        {cell.row === 1 ? (<td className="cell" style={{backgroundColor: cell.fill}} onClick={this.getMove} key={idx} id={idx}>{ cell.value }</td>) : null }
-                    </>
-                ))}
-            </tr>
-                <tr>
-                {cells && cells.map( (cell, idx) => (
-                        <>
-                        {cell.row === 2 ? (<td className="cell" style={{backgroundColor: cell.fill}} onClick={this.getMove} key={idx} id={idx}>{ cell.value }</td>) : null }
-                    </>
-                ))}
-            </tr>
-                <tr>
-                {cells && cells.map( (cell, idx) => (
-                        <>
-                        {cell.row === 3 ? (<td className="cell" style={{backgroundColor: cell.fill}} onClick={this.getMove} key={idx} id={idx}>{ cell.value }</td>) : null }
-                    </>
-                ))}
-            </tr>
-                </tbody>
-                </table>
-                <div className="endgame" style={hide}>
-                <div className="text">{ winner ? winner + " venceu!" : 'Empate!' }</div>
+                <div align="center">
+                    <table>
+                        <tbody>
+                        <tr>
+                        {cells && cells.map( (cell, idx) => (
+                                <>
+                                {cell.row === 1 ? (<td className="cell" style={{backgroundColor: cell.fill}} onClick={this.getMove} key={idx} id={idx}>{ cell.value }</td>) : null }
+                            </>
+                        ))}
+                    </tr>
+                        <tr>
+                        {cells && cells.map( (cell, idx) => (
+                                <>
+                                {cell.row === 2 ? (<td className="cell" style={{backgroundColor: cell.fill}} onClick={this.getMove} key={idx} id={idx}>{ cell.value }</td>) : null }
+                            </>
+                        ))}
+                    </tr>
+                        <tr>
+                        {cells && cells.map( (cell, idx) => (
+                                <>
+                                {cell.row === 3 ? (<td className="cell" style={{backgroundColor: cell.fill}} onClick={this.getMove} key={idx} id={idx}>{ cell.value }</td>) : null }
+                            </>
+                        ))}
+                    </tr>
+                        </tbody>
+                    </table>
                 </div>
-                <Button onClick={this.startGame} variant="contained" color="primary" className='button'>
-                    Recomeçar
-                </Button>
+                <div align="center">
+                    <div className="endgame" style={styleEndGame}>
+                    <div className="text">{ winner ? winner + " venceu!" : 'Empate!' }</div>
+                    </div>
+                </div>
+                <div align="center">
+                    <Button onClick={this.startGame} variant="contained" color="primary" className='button'>
+                        Recomeçar
+                    </Button>
+                </div>
                 </>
         );
     }
