@@ -17,17 +17,17 @@ class Home extends Component {
         super(props);
 
         this.state = {
+            startGame: false,
         };
     }
 
-    setSetup = () => {
-        let setup = {};
-        this.setStatus({ setup });
+    setSetup = (setup) => {
+        this.setState({ setup, startGame: true });
     }
 
     render() {
 
-        const { setup } = this.state;
+        const { setup, startGame } = this.state;
 
         return (
             <>
@@ -52,7 +52,7 @@ class Home extends Component {
                     </div>
                 </Grid>
                 <Grid item xs={6}>
-                    <Game setup={setup} />
+                    <Game startGame={startGame} setup={setup} />
                 </Grid>
             </Grid>
             </>

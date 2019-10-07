@@ -20,18 +20,18 @@ class Game extends Component {
         super(props);
 
         this.state = {
-            gameMode: "dumb",
-            players: {
-                "human":
-                    {
+            setup: {
+                players: {
+                    human: {
                         name: 'Você',
                         symbol: '1',
                     },
-                "ai":
-                    {
+                    ai: {
                         name: 'IA',
                         symbol: '0',
-                    }
+                    },
+                level: 'dumb'
+                },
             },
             endGame: false,
             winner: null,
@@ -104,7 +104,18 @@ class Game extends Component {
     }
 
     componentDidMount () {
+        const { setup } = this.props;
+
         this.startGame();
+
+    }
+
+    componentDidUpdate(prevProps) {
+        const { setup } = this.props;
+
+        if (this.props.setup !== prevProps.setup) {
+            this.setState({ setup });
+        }
     }
 
     startGame = () => {
@@ -118,13 +129,13 @@ class Game extends Component {
     }
 
     getMove = (e) => {
-        const { players } = this.state;
+        const { players } = this.state.setup;
         if(this.isValidMovement(e.target.id)) {   // cell is still available
             this.turn(e.target.id, players['human']);
             this.setState({}, () => {  // setState() without objects to update in order to force the endGame's pending update
                 const { endGame } = this.state;
                 if (!endGame)  // if it isn't a tie
-                    this.turn(this.bestMove(), players['ai']);
+                    this.turn(this.bestMove(), players.ai);
             });
         }
     }
@@ -151,8 +162,9 @@ class Game extends Component {
     }
 
     bestMove = () => {
-        const { gameMode, players, cells } = this.state;
-        if (gameMode === 'dum') {
+        const { cells } = this.state;
+        const { level, players } = this.state.setup;
+        if (level === 'dumb') {
             try {
                 return this.emptyCells(cells)[0].id;
             } catch(err) {
@@ -160,13 +172,12 @@ class Game extends Component {
         }
         else {
             let cellsCopy = cloneDeep(cells);
-            console.log(cellsCopy);
-            return this.minimax(cellsCopy, players['ai']).index;
+            return this.minimax(cellsCopy, players.ai).index;
         }
     }
 
     minimax = (cells, player) => {
-        const { players } = this.state;
+        const { players } = this.state.setup;
         var empties = this.emptyCells(cells, true);
 
         if (this.checkWinner(cells, players.human, true) !== -1) {
@@ -196,7 +207,7 @@ class Game extends Component {
         }
 
         var bestMove;
-        if(player === players['ai']) {
+        if(player === players.ai) {
             let bestScore = -10000;
             for(let i = 0; i < moves.length; i++) {
                 if (moves[i].score > bestScore) {
@@ -214,9 +225,6 @@ class Game extends Component {
             }
         }
 
-        if(player === players['ai'])
-            ;
-            //console.log("Moves", moves);
         return moves[bestMove];
     }
 
@@ -251,49 +259,51 @@ class Game extends Component {
 
     render() {
         const { cells, endGame, winner } = this.state;
+        const { startGame } = this.props;
 
         let styleEndGame = !endGame ? {visibility: 'hidden'} : {};
-        //let styleButton = !started ? {}
+        let styleTableRow = (cell) => { return {backgroundColor: cell.fill, borderColor: (startGame ? '#333' : '#CCC')};}
+
         return (
-                <>
+            <>
                 <div align="center">
                     <table>
                         <tbody>
-                        <tr>
-                        {cells && cells.map( (cell, idx) => (
-                                <>
-                                {cell.row === 1 ? (<td className="cell" style={{backgroundColor: cell.fill}} onClick={this.getMove} key={idx} id={idx}>{ cell.value }</td>) : null }
-                            </>
-                        ))}
-                    </tr>
-                        <tr>
-                        {cells && cells.map( (cell, idx) => (
-                                <>
-                                {cell.row === 2 ? (<td className="cell" style={{backgroundColor: cell.fill}} onClick={this.getMove} key={idx} id={idx}>{ cell.value }</td>) : null }
-                            </>
-                        ))}
-                    </tr>
-                        <tr>
-                        {cells && cells.map( (cell, idx) => (
-                                <>
-                                {cell.row === 3 ? (<td className="cell" style={{backgroundColor: cell.fill}} onClick={this.getMove} key={idx} id={idx}>{ cell.value }</td>) : null }
-                            </>
-                        ))}
-                    </tr>
+                            <tr>
+                                {cells && cells.map( (cell, idx) => (
+                                    <>
+                                        {cell.row === 1 ? (<td className="cell" style={styleTableRow(cell)} onClick={startGame ? this.getMove : () => {}} key={idx} id={idx}>{ cell.value }</td>) : null }
+                                    </>
+                                ))}
+                            </tr>
+                            <tr>
+                                {cells && cells.map( (cell, idx) => (
+                                    <>
+                                        {cell.row === 2 ? (<td className="cell" style={styleTableRow(cell)} onClick={startGame ? this.getMove : () => {}} key={idx} id={idx}>{ cell.value }</td>) : null }
+                                    </>
+                                ))}
+                            </tr>
+                            <tr>
+                                {cells && cells.map( (cell, idx) => (
+                                    <>
+                                        {cell.row === 3 ? (<td className="cell" style={styleTableRow(cell)} onClick={startGame ? this.getMove : () => {}} key={idx} id={idx}>{ cell.value }</td>) : null }
+                                    </>
+                                ))}
+                            </tr>
                         </tbody>
                     </table>
                 </div>
                 <div align="center">
                     <div className="endgame" style={styleEndGame}>
-                    <div className="text">{ winner ? winner + " venceu!" : 'Empate!' }</div>
+                        <div className="text">{ winner ? winner + " venceu!" : 'Empate!' }</div>
                     </div>
                 </div>
                 <div align="center">
-                    <Button onClick={this.startGame} variant="contained" color="primary" className='button'>
+                    <Button disabled={!startGame} onClick={this.startGame} variant="contained" color="primary" className='button'>
                         Recomeçar
                     </Button>
                 </div>
-                </>
+            </>
         );
     }
 }
