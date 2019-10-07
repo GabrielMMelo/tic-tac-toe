@@ -7,3 +7,8 @@
 .menuButton {
     marginRight: theme.spacing(2),
 }
+.setup {
+    position: relative;
+    left: 20%;
+    top: 5%;
+}
