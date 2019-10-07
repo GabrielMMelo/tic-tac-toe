@@ -104,10 +104,7 @@ class Game extends Component {
     }
 
     componentDidMount () {
-        const { setup } = this.props;
-
         this.startGame();
-
     }
 
     componentDidUpdate(prevProps) {
@@ -118,6 +115,7 @@ class Game extends Component {
         }
     }
 
+    /* sets up the configuration for a new game (and restart game) */
     startGame = () => {
         let { cells } =  this.state;
         this.setState({ endGame: false, winner: null });
@@ -128,6 +126,7 @@ class Game extends Component {
         }
     }
 
+    /* click handler to identify the move requested and check if it`s a valid movement */
     getMove = (e) => {
         const { players } = this.state.setup;
         if(this.isValidMovement(e.target.id)) {   // cell is still available
@@ -140,6 +139,7 @@ class Game extends Component {
         }
     }
 
+    /* in fact, does the movement */
     turn = (position, player) => {
         let { cells } = this.state;
         cells[position].value = player.symbol;
@@ -153,6 +153,7 @@ class Game extends Component {
         }
     }
 
+    /* return the empty cells on the board */
     emptyCells = (cells, fromMinMax=false) => {
         let empties = cells.filter(cell => cell.value === '');
         if (empties.length === 0 && !fromMinMax) {
@@ -161,6 +162,7 @@ class Game extends Component {
         return empties;
     }
 
+    /* search for the best move using a specified algorithm (actual: `dumb` or `minmax`) */
     bestMove = () => {
         const { cells } = this.state;
         const { level, players } = this.state.setup;
@@ -176,6 +178,7 @@ class Game extends Component {
         }
     }
 
+    /* execute minmax over all cells */
     minimax = (cells, player) => {
         const { players } = this.state.setup;
         var empties = this.emptyCells(cells, true);
@@ -193,7 +196,7 @@ class Game extends Component {
             move.index = cells[empties[i].id].id;
             cells[empties[i].id].value = player.symbol;
 
-            if (player == players['ai']) {
+            if (player === players.ai) {
                 let result = this.minimax(cloneDeep(cells), players.human);
                 move.score = result.score;
             } else {
@@ -228,9 +231,10 @@ class Game extends Component {
         return moves[bestMove];
     }
 
-
+    /* check if some player wins the game or if it`s a draw */
     checkWinner = (cells, player, fromMinMax=false) => {
         let possibilityIdx = -1;
+        // eslint-disable-next-line
         winPossibilities.map((possibility, idx) => {
             if (cells[possibility[0]].value === player.symbol && cells[possibility[1]].value === player.symbol && cells[possibility[2]].value === player.symbol) {
                 if(!fromMinMax)
@@ -244,8 +248,10 @@ class Game extends Component {
         return possibilityIdx;
     }
 
+    /* highlight the background of the winner cells */
     fillWinnerMove = (winnerCells) => {
         let { cells } = this.state;
+        // eslint-disable-next-line
         winnerCells.map((cell) => {
             cells[cell].fill = 'rgba(0,200,0,0.4)';
         });

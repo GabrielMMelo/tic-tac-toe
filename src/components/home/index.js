@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 
 import AppBar from '@material-ui/core/AppBar';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
 import Grid from '@material-ui/core/Grid';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
 
 import Game from '../game';
 import Setup from '../setup';
@@ -41,9 +40,19 @@ class Home extends Component {
                 </AppBar>
             </div>
 
-            <div align='center'>
-                <p> Jogo desenvolvido utilizando o algoritmo de <i>MinMax</i> para a disciplina de <i>Inteligência Artificial</i> do curso de graduação em ciência da computação da UFLA. </p>
-            </div>
+            <Grid container className='message' justify="center">
+                <Grid item xs={8}>
+                    <div>
+                        <Card>
+                            <CardContent>
+                                <p>
+                                Jogo desenvolvido utilizando o algoritmo de <i>MinMax</i> para a disciplina de <i>Inteligência Artificial</i> do curso de graduação em ciência da computação da UFLA.
+                                </p>
+                            </CardContent>
+                        </Card>
+                    </div>
+                </Grid>
+            </Grid>
 
             <Grid container justify="center" spacing={3}>
                 <Grid item xs={6}>

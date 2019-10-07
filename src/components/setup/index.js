@@ -1,19 +1,13 @@
 import React, { Component } from 'react';
 
-import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Grid from '@material-ui/core/Grid';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
-import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 
-import MenuIcon from '@material-ui/icons/Menu';
-import IconButton from '@material-ui/core/IconButton';
-
-import Game from '../game';
 import './style.css';
 
 class Setup extends Component {
@@ -94,18 +88,17 @@ class Setup extends Component {
 
     render() {
 
-        const { name, levels, setup, symbols } = this.state;
-        const { setSetup } = this.props;
+        const { levels, setup, symbols } = this.state;
 
         return (
             <>
                 <Card className='card'>
                     <CardContent>
-                        <Typography className='cardTitle' gutterBottom variant='h4' component='h2'>Configuracoes</Typography>
+                        <Typography className='cardTitle' gutterBottom variant='h4' component='h2'>Configurações</Typography>
                         <Grid container justify="center">
                             <Grid item xs={8}>
                                 <div align="left">
-                                    <Typography className='playerTitle' gutterBottom variant='h5' component='h4'>Player</Typography>
+                                    <Typography className='playerTitle' gutterBottom variant='h5' component='h4'>Jogador</Typography>
                                 </div>
                                 <TextField
                                     className="formField"
